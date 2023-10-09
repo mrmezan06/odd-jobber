@@ -12,12 +12,18 @@ const { use } = require('../routes/userRoutes');
 const register = async (req, res) => {
   try {
     const { phone, role } = req.body;
-    const user = await User.create({
+    const user = await User.findOne({ phone });
+    if (user) {
+      return res.status(400).json({
+        message: 'User already exists',
+      });
+    }
+    const newUser = await User.create({
       phone,
       role,
     });
     res.status(201).json({
-      user,
+      user: newUser,
     });
   } catch (error) {
     res.status(500).json({
